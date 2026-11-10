@@ -83,10 +83,11 @@ class Rp2040:
                 addr = int(dut.uio_out.value)
                 if addr < 0x80:
                     self.pending_store = addr
+        await Timer(1, unit="us")  # setup time: inputs stable before the clock edge
         dut.clk.value = 1
         await Timer(HALF, unit="us")
         dut.clk.value = 0
-        await Timer(HALF, unit="us")
+        await Timer(HALF - 1, unit="us")
         if st == 5:
             self.prev_op = self.instr >> 13
         self.pwm_samples.append(int(dut.uo_out.value) >> 7)
