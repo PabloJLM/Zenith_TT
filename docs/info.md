@@ -43,4 +43,4 @@ The cocotb tests in `test/` do exactly this (Fibonacci, STORE/LOAD, PWM, UART TX
 
 ## External hardware
 
-A USB-UART adapter (or the RP2040 of the demo board) to send the program. LEDs on `uio` and `uo` are optional.
+A USB-UART adapter (or the RP2040 of the demo board) to send the program.
