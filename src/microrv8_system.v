@@ -40,7 +40,15 @@ module microrv8_system #(
 );
 
     wire loader_loading;
-    wire cpu_rst_n = rst_n & ~loader_loading;
+    // El CPU no arranca hasta que el loader termina la primera carga:
+    // sin programa, la memoria de instrucciones tiene basura (X en silicio).
+    reg  prog_loaded;
+    wire loader_done;
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)           prog_loaded <= 1'b0;
+        else if (loader_done) prog_loaded <= 1'b1;
+    end
+    wire cpu_rst_n = rst_n & ~loader_loading & prog_loaded;
     assign loader_active = loader_loading;
 
     // Bus CPU - Instruction Memory
@@ -183,7 +191,7 @@ module microrv8_system #(
         .wr_data  (ldr_wr_data),
         .wr_en    (ldr_wr_en),
         .loading  (loader_loading),
-        .load_done()
+        .load_done(loader_done)
     );
 
     wire _cpu_out_suppress = &{cpu_gpio_direct[7:0]}; 
